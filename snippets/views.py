@@ -61,33 +61,19 @@ def book_detail(request,pk):
 @api_view(['GET', 'POST'])
 def user_list(request):
     if request.method == "GET":
-        # User.objects.all() - queryset qaytaradi, va many=True flagi kerak
-        users = Users.objects.all()  
-        serializer = UserSerializer(users, many=True)  # many=True, chunki bir nechta foydalanuvchi
-        print(serializer.data,"99====================================================================")
+        users = Users.objects.all()
+        serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
-
+    
     elif request.method == "POST":
-        # Yangi foydalanuvchi qo‘shish
         serializer = UserSerializer(data=request.data)
-        print(serializer.data,"0====================================================================")
-        
-        
+
         if serializer.is_valid():
-            # Serializerni print qilish va tekshirish
-            print(serializer.data,"1====================================================================")
- 
             serializer.save()
-            print(serializer.data,"2====================================================================")
+            print(serializer.data, "✅ SAVE QILINGAN MA'LUMOTLAR")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        print(serializer.errors, "❌ XATOLIKLAR BOR")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-    
-
-        
-        
-     
-     
-     
