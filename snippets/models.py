@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Book(models.Model):
@@ -22,3 +25,11 @@ class Users(models.Model):
 
     def __str__(self):
         return self.first_name
+    
+
+class CommitBook(models.Model):
+    title = models.TextField()
+    book = models.ForeignKey(Book,on_delete=models.CASCADE)
+    author = models.ForeignKey(User,on_delete=models.CASCADE)
+    create_ed =  models.DateField(auto_now_add=True)
+    update_ed = models.DateTimeField(auto_now=True)
