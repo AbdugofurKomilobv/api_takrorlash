@@ -50,9 +50,7 @@ class BookDetailView(APIView):
             return Response({
                 "success": True,
                 "data": serializer.data
-            },status.HTTP_200_OK)
-       
-                
+            },status.HTTP_200_OK)       
         def put(self,request,pk):
          book = get_object_or_404(Book,pk=pk)
          serializer = BookSerializer(book,data = request.data)
@@ -73,3 +71,35 @@ class BookDetailView(APIView):
                         "errors":str(e)
                     },status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
+        def patch(self,request,pk):
+            book = get_object_or_404(Book,pk=pk)
+            serializer = BookSerializer(book,data = request.data,partial=True)
+            if serializer.is_valid(raise_exception=True):
+                try:
+                    serializer.save()
+                    return Response({
+                        "success":True,
+                        "message":"Muvofaqyatli O'zgartirildi",
+                        "data": serializer.data
+                    },status.HTTP_200_OK)
+                except Exception as e:
+                    return Response({
+                        "success": False,
+                        "errors": str(e)
+                    },status.HTTP_500_INTERNAL_SERVER_ERROR)
+        def delete(self,request,pk): 
+            try: 
+                book = get_object_or_404(Book,pk=pk)
+                book.delete()
+                return Response({
+                        "success":True,
+                        "message": "O'chirildi"
+                    },status.HTTP_204_NO_CONTENT)
+            except Exception as a:
+                    return Response({
+                        "succes":False,
+                        "errors":str(a)
+                    },status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+      
+            
