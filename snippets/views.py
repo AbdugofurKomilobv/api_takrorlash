@@ -159,7 +159,15 @@ class CommitDetailBook(APIView):
          try:
              commit = CommitBook.objects.get(pk=pk,book_id=book_id, author=request.user)
          except CommitBook.DoesNotExist:
-             return Response({"errors":"buday coment mavjud emas"})
+             return Response({"errors":"buday coment mavjud emas yoki sizga tegishli emas"},status.HTTP_404_NOT_FOUND)
+         serializer = CommitSerializer(commit,data= request.data)
+         if serializer.is_valid():
+             serializer.save()
+             return Response({"success":True,
+                              "massage":"Comment yangilandi",
+                              "data":serializer.data},status.HTTP_200_OK)
+         return Response({"success":False,"errors":serializer.errors},status.HTTP_400_BAD_REQUEST)
+         
         
          
          
