@@ -167,6 +167,14 @@ class CommitDetailBook(APIView):
                               "massage":"Comment yangilandi",
                               "data":serializer.data},status.HTTP_200_OK)
          return Response({"success":False,"errors":serializer.errors},status.HTTP_400_BAD_REQUEST)
+     
+     def delete(self,request,book_id,pk):
+         try: 
+             commit = get_object_or_404(CommitBook,pk=pk,book_id=book_id, author = request.user)
+         except CommitBook.DoesNotExist:
+             return Response({"errors":"Bunday comentarya mavjud emas yoki sizga tegishli emas"},status.HTTP_404_NOT_FOUND)
+         commit.delete()
+         return Response({"success": True,"message": "coment o'chirildi"},status.HTTP_204_NO_CONTENT)
          
         
          
