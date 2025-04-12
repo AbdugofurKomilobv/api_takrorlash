@@ -1,19 +1,15 @@
 from rest_framework import serializers
 
-from .models import Book,Users,CommitBook
+from .models import Book,CommitBook
 
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ['title','author','pages','genre','year']
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-          model = Users
-          fields = '__all__'
 
 class CommitSerializer(serializers.ModelSerializer):
      class Meta:
          model = CommitBook
-         fields = '__all__'
+         fields = "__all__"

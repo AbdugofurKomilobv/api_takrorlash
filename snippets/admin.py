@@ -4,5 +4,5 @@ from .models import *
 
 
 admin.site.register(Book)
-admin.site.register(Users)
+
 admin.site.register(CommitBook)

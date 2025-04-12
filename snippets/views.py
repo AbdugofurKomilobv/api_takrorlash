@@ -2,16 +2,19 @@ from django.shortcuts import render
 from rest_framework import generics,status,viewsets
 from rest_framework.decorators import api_view,action
 from rest_framework.response import Response
-from .models import Book,Users
-from .serializers import BookSerializer,UserSerializer
+from .models import Book,CommitBook
+from .serializers import BookSerializer,CommitSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 
 
-
+# Ktob qoshish uchun api
 class BookView(APIView):
+
     
     def get(self,request):
         book = Book.objects.all()
@@ -42,8 +45,11 @@ class BookView(APIView):
                 )
 
            
-                   
+#Comentarya uchun api  
 class BookDetailView(APIView):
+        permission_classes = [IsAuthenticated]
+        # authentication_classes = [TokenAuthentication]
+        
         def get(self,request,pk):
             book = get_object_or_404(Book,pk=pk)
             serializer = BookSerializer(book)
@@ -101,5 +107,62 @@ class BookDetailView(APIView):
                         "errors":str(a)
                     },status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class CommitBookApiView(APIView):
+
+
+     
+    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+
+
+   
+    def get(self,request):
+        # faqat o'zimni comntlarimni olaman
+        try:
+            commits = CommitBook.objects.all()
+            serializer = CommitSerializer(commits,many =True)
+            return Response(serializer.data, status.HTTP_200_OK)
+        except CommitBook.DoesNotExist:
+            return Response({
+                "detail": " comentaryalar topilmadi"
+            },status.HTTP_404_NOT_FOUND)
+  
+    def post(self,request,book_id):
+        try:
+            book = Book.objects.get(id=book_id)
+        except Book.DoesNotExist:
+            return Response({"detail":"bunday kitob topilmadi"},status.HTTP_404_NOT_FOUND)
+        serializer = CommitSerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(book=book,author=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status.HTTP_400_BAD_REQUEST)
       
-            
+
+class CommitDetailBook(APIView):
+     permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+     def get(self,request,book_id):
+         try:
+            commits = CommitBook.objects.filter(book_id=book_id, author = request.user)
+            serializer = CommitSerializer(commits,many =True)
+            return Response(serializer.data,status.HTTP_200_OK)
+         except CommitBook.DoesNotExist:
+             return Response({
+                 "detail": "Xali comment yozmagansiz"
+                 },status.HTTP_404_NOT_FOUND)
+         
+
+
+     def put(self,request,book_id,pk):
+         try:
+             commit = CommitBook.objects.get(pk=pk,book_id=book_id, author=request.user)
+         except CommitBook.DoesNotExist:
+             return Response({"errors":"buday coment mavjud emas"})
+        
+         
+         
+    
+
+
