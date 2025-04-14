@@ -35,8 +35,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # tashqi
     'rest_framework',
+    # maxalliy
     'snippets',
+    'user_auth',
 ]
 
 MIDDLEWARE = [
